@@ -100,6 +100,18 @@
       "experience": 3,
       "package": 15,
       "id": 7
+    },
+    {
+      "firstName": "John",
+      "lastName": "Depp",
+      "email": "johndepp@pin.com",
+      "dob": "2024-05-15T18:30:00.000Z",
+      "gender": "male",
+      "education": "Post Graduate",
+      "company": "aws",
+      "experience": 5,
+      "package": 17,
+      "id": 8
     }
   ]
 }
