@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CoreService } from './core/core.service';
 import { EmpEditComponent } from './emp-edit/emp-edit.component';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -14,17 +15,20 @@ import { EmpEditComponent } from './emp-edit/emp-edit.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit{
+
+  dataArray: any[]=[];
+
+item: any;
+  title(title: any) {
+    throw new Error('Method not implemented.');
+  }
   displayedColumns: string[] = [
     'id',
-    'firstName',
-    'lastName',
+    'name',
+    'username',
     'email',
-    'dob',
-    'gender',
-    'education',
-    'company',
-    'experience',
-    'package',
+    'website',
+    'phone',
     'action',
   ];
   dataSource!: MatTableDataSource<any>;
@@ -33,17 +37,19 @@ export class AppComponent implements OnInit{
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private _dialog: MatDialog,
-    private _empService: EmployeeService,
-    private _coreService: CoreService
+    private dialog: MatDialog,
+    private empService: EmployeeService,
+    private coreService: CoreService,
+    private http:HttpClient
   ) {}
 
   ngOnInit(): void {
     this.getEmployeeList();
+    
   }
 
   openAddEditEmpForm() {
-    const dialogRef = this._dialog.open(EmpEditComponent);
+    const dialogRef = this.dialog.open(EmpEditComponent);
     dialogRef.afterClosed().subscribe({
       next: (val) => {
         if (val) {
@@ -54,7 +60,7 @@ export class AppComponent implements OnInit{
   }
 
   getEmployeeList() {
-    this._empService.getEmployeeList().subscribe({
+    this.empService.getEmployeeList().subscribe({
       next: (res) => {
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.sort = this.sort;
@@ -73,10 +79,19 @@ export class AppComponent implements OnInit{
     }
   }
 
+  // delete(id: number) {
+  //   this.http.delete(`https://jsonplaceholder.typicode.com/users/${id}`).subscribe((res) => {
+  //       // Handle success (e.g., show a message)
+  //       console.log(`Item with ID ${id} deleted successfully.`);
+  //       // Remove the item from the array
+  //       this.dataArray = this.dataArray.filter((item: { id: number; }) => item.id !== id);
+  //     });
+  // }
+
   deleteEmployee(id: number) {
-    this._empService.deleteEmployee(id).subscribe({
+    this.empService.deleteEmployee(id).subscribe({
       next: (res) => {
-        this._coreService.openSnackBar('Employee deleted!', 'done');
+        this.coreService.openSnackBar('Employee deleted!', 'done');
         this.getEmployeeList();
       },
       error: console.log,
@@ -84,7 +99,7 @@ export class AppComponent implements OnInit{
   }
 
   openEditForm(data: any) {
-    const dialogRef = this._dialog.open(EmpEditComponent, {
+    const dialogRef = this.dialog.open(EmpEditComponent, {
       data,
     });
 

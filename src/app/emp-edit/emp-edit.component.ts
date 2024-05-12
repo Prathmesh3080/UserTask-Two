@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CoreService } from '../core/core.service';
 import { EmployeeService } from '../services/employee.service';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -13,16 +14,10 @@ import { EmployeeService } from '../services/employee.service';
 })
 export class EmpEditComponent implements OnInit{
   empForm: FormGroup;
-
-  education: string[] = [
-    'Matric',
-    'Diploma',
-    'Intermediate',
-    'Graduate',
-    'Post Graduate',
-  ];
+  dataArray: any[]=[];
 
   constructor(
+    private http:HttpClient,
     private fb: FormBuilder,
     private empService: EmployeeService,
     private dialogRef: MatDialogRef<EmpEditComponent>,
@@ -30,27 +25,26 @@ export class EmpEditComponent implements OnInit{
     private coreService: CoreService) {
     
       this.empForm = this.fb.group({
-      firstName: '',
-      lastName: '',
+      name: '',
+      username: '',
       email: '',
-      dob: '',
-      gender: '',
-      education: '',
-      company: '',
-      experience: '',
-      package: '',
+      website: '',
+      phone: ''
     });
   }
 
+
   ngOnInit(): void {
     this.empForm.patchValue(this.data);
+    this.http.get('https://jsonplaceholder.typicode.com/users').subscribe((data : any) => {
+      this.dataArray = data;
+    });
   }
 
   onFormSubmit() {
     if (this.empForm.valid) {
       if (this.data) {
-        this.empService.updateEmployee(this.data.id, this.empForm.value).subscribe({
-            next: (val: any) => {
+        this.empService.updateEmployee(this.data.id, this.empForm.value).subscribe({next: (val: any) => {
               this.coreService.openSnackBar('Employee detail updated!');
               this.dialogRef.close(true);
             },
